@@ -186,8 +186,12 @@ background: #eee;
     0%{
         transform: scale(1);
     }
+    60%{
+        opacity: 1;
+    }
     100%{
         transform: scale(0);
+        opcacity:0;
     }
 }
 .alertBox i{
