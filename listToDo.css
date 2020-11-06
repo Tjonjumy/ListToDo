@@ -241,7 +241,7 @@ background: #eee;
     }
     .container{
         margin: 10px auto;
-        height:80vh;
+        height:85vh;
     }
 }
 @media screen and (max-width:349px){
