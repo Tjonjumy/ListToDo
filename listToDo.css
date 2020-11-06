@@ -191,7 +191,7 @@ background: #eee;
     }
     100%{
         transform: scale(0);
-        opcacity:0;
+        opacity:0;
     }
 }
 .alertBox i{
