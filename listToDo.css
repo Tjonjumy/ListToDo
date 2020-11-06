@@ -191,7 +191,7 @@ background: #eee;
     }
     100%{
         transform: scale(0);
-        opcacity:0;
+        opacity:0;
     }
 }
 .alertBox i{
@@ -236,8 +236,11 @@ background: #eee;
 }
 /* ------------ responsive ------------ */
 @media screen and (max-width:768px){
+    body{
+        align-items: flex-start;
+    }
     .container{
-        height:98vh;
+        margin: 10px auto;
     }
 }
 @media screen and (max-width:349px){
