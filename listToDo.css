@@ -88,6 +88,7 @@ body{
     display:flex;
     justify-content: space-around;
     align-items: center;
+    transition: 1s top linear;
 }
 .container .content ul li:nth-child(odd){
 background: #eee;
@@ -97,6 +98,7 @@ background: #eee;
 }
 .container .content ul li span{
     flex:50;
+    overflow-wrap: break-word;
     overflow: hidden;
 }
 .container .content ul li .fa-trash-o{
@@ -233,6 +235,23 @@ background: #eee;
 .alertBox div button.no{
     background-color: rgb(219, 126, 126);
     margin-left: 20px;
+}
+
+.completed {
+    display: ;
+    cursor: pointer;
+    font-size: 1.3rem;
+    padding: 10px;
+    background-color: #222;
+    color: #2ECC71;
+    font-weight: 700;
+}
+.completed .fa-chevron-down{
+    transition: transform 0.2s linear;
+    transform: rotate(-0deg);
+}
+#completedList{
+    transition: display 0.3s linear;
 }
 /* ------------ responsive ------------ */
 @media screen and (max-width:768px){

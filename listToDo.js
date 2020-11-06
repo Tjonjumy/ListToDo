@@ -7,27 +7,38 @@ if(data){
 else{
     items=[];
 }
-//console.log(items);
+let countCompleted=0;
+
 //variables
 const list=document.getElementById('list');
+const completedList=document.getElementById('completedList');
 const CHECK='fa-check-circle';
 const UNCHECK='fa-circle-thin';
 const LINETHROUGHT='lineThrought';
 // Generating list to-do function
 function render(){
     var html="";
+    var comphtml="";
     items.forEach(item=>{
-        if(item.trash){return;}
-        const DONE=item.done?CHECK:UNCHECK;
-        const LINE=item.done?LINETHROUGHT:"";
-        html+=`<li class="item ${item.id}" >
-                <i class="fa ${DONE}" aria-hidden="true" job="complete"></i>
-                <span class="text ${LINE}">${item.todo}</span>
-                <i class="fa fa-trash-o" aria-hidden="true" job="delete"></i>
-            </li>`;
-    })
+    if(item.trash){return;}
+    const DONE=item.done?CHECK:UNCHECK;
+    const LINE=item.done?LINETHROUGHT:"";
+    if(item.done){
+        comphtml+=`<li class="item ${item.id}" >
+            <i class="fa ${DONE}" aria-hidden="true" job="complete"></i>
+            <span class="text ${LINE}">${item.todo}</span>
+            <i class="fa fa-trash-o" aria-hidden="true" job="delete"></i>
+        </li>`;
+        return;
+    }
+    html+=`<li class="item ${item.id}" >
+            <i class="fa ${DONE}" aria-hidden="true" job="complete"></i>
+            <span class="text ${LINE}">${item.todo}</span>
+            <i class="fa fa-trash-o" aria-hidden="true" job="delete"></i>
+        </li>`;
+    });
     list.innerHTML=html;
-    //console.log(html);
+    completedList.innerHTML=comphtml;
 }
 
 // Get value of input when enter key is pressed
@@ -63,11 +74,10 @@ function addToDo(){
         {
             id:items.length,
             todo:`${toDo}`,
-            done:false,
+            done:false, 
             trash:false
         }
     );
-    //console.log(items);
     render();
 }
 
@@ -91,6 +101,8 @@ refreshElement.onclick=function(){
 yesConfirm.addEventListener('click',()=>{
     alertBox.style.display='none';
     items.splice(0,items.length);
+    countCompleted=0;
+    updateCountCompleted();
     localStorage.setItem("TODO", JSON.stringify(items));
     render();
 })
@@ -114,14 +126,15 @@ dateElement.innerText=today.toLocaleDateString("en-US", options);
 
 //Delete to do
 function deleteToDo(element){
-    
     element.parentElement.parentElement.removeChild(element.parentElement);
     items[element.parentElement.classList.value.slice(5)].trash=true;
-    //console.log(items);
+    if(items[element.parentElement.classList.value.slice(5)].done){
+        countCompleted--;
+        updateCountCompleted();
+    }   
 }
-
-//Complete to do
-function completeToDo(element){
+// check or uncheck
+function check(element){
     if(element.tagName=='I'){
         element.classList.toggle('fa-circle-thin');
         element.classList.toggle('fa-check-circle');
@@ -132,23 +145,80 @@ function completeToDo(element){
         element.parentElement.querySelector('.fa').classList.toggle('fa-circle-thin');
         element.parentElement.querySelector('.fa').classList.toggle('fa-check-circle');
     }
-    
     let elementId=element.parentElement.classList.value.slice(5);
     items[elementId].done = items[elementId].done ? false:true;
-    //console.log(items);  
+}
+//Complete to do
+function completeToDo(element){
+    check(element);
+    countCompleted++;
+    updateCountCompleted();
+    list.removeChild(element.parentElement);
+    completedList.appendChild(element.parentElement);
+}
+// re-complete to do
+function recomplete(element){
+    check(element);
+    countCompleted--;
+    updateCountCompleted();
+    completedList.removeChild(element.parentElement);
+    list.appendChild(element.parentElement);
 }
 // action when click each item
-list.addEventListener('click',function(event){
+list.addEventListener('click',(event)=>{
+    action(event);
+});
+completedList.addEventListener('click',(event)=>{
+    action(event);
+});
+function action(event){
     const element=event.target; 
     const elementJob=element.attributes.job ? element.attributes.job.value:event.target.tagName;
     if(elementJob=='delete'){
         deleteToDo(element);
     }
     else if(elementJob=='complete'||elementJob=='SPAN'){
-        completeToDo(element);
+        if(event.target.parentElement.parentElement.id=="list"){
+            completeToDo(element);
+        }
+        else{
+            recomplete(element);
+        }
     }
     localStorage.setItem("TODO", JSON.stringify(items));
-});
+}
 window.onload=function(){
     render();
+    items.forEach((item)=>{
+        if(item.done&&!item.trash){
+            countCompleted++;
+        }
+    });
+    updateCountCompleted();
 }
+
+// completed list
+const completed=document.querySelector('.completed');
+const completedText=document.querySelector('.completed span');
+const chevrondown=document.querySelector('.fa-chevron-down');
+// initial completed list
+function updateCountCompleted(){
+    if(countCompleted>0){
+        completed.style.display="block";
+        completedText.innerText=`Completed ${countCompleted}`;
+    }
+    else{
+        completed.style.display="none";
+    }
+}
+
+completed.addEventListener('click',()=>{
+    if(window.getComputedStyle(chevrondown).getPropertyValue('transform')=='matrix(6.12323e-17, -1, 1, 6.12323e-17, 0, 0)'){
+        chevrondown.style.transform="rotate(0deg)";
+        completedList.style.display='block';
+    }
+    else{
+        chevrondown.style.transform="rotate(-90deg)";
+        completedList.style.display='none';
+    } 
+});
