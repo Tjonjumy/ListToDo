@@ -10,7 +10,6 @@ html{
 body{
     font-family: 'Times New Roman', Times, serif;
     display: flex;
-    justify-content: center;
     align-items: center;
     height: 100vh;
     background:linear-gradient(to right,#ddd6f3 ,#faaca8);
@@ -232,6 +231,11 @@ background: #eee;
     margin-left: 20px;
 }
 /* ------------ responsive ------------ */
+@media screen and (max-width:768px){
+    .container{
+        height:98vh;
+    }
+}
 @media screen and (max-width:349px){
     html{
         font-size: 13px;
